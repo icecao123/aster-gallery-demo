@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aster Gallery — Contemporary Art Online · Demo</title>
+<meta name="description" content="Aster Gallery is a fictional contemporary art gallery. This demonstration e-commerce concept by TablePilot Studio shows artwork catalogue, filtering, cart and checkout — all content is illustrative.">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23141414'/%3E%3Cpath d='M16 6 26 26H6Z' fill='%23B08D4F'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#FAF9F6;
+  --card:#FFFFFF;
+  --ink:#141414;
+  --ink-2:#5E5A53;
+  --ink-3:#9C978E;
+  --gold:#B08D4F;
+  --gold-d:#8F7140;
+  --line:rgba(20,20,20,.14);
+  --line-2:rgba(20,20,20,.06);
+  --bg-alt:#F1EFEA;
+  --shadow:0 22px 50px rgba(20,20,20,.12);
+  --serif:'Cormorant Garamond',Georgia,'Times New Roman',serif;
+  --sans:'Public Sans','Segoe UI',system-ui,sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-height:1.65;-webkit-font-smoothing:antialiased;font-size:15.5px}
+img{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer}
+.wrap{max-width:1200px;margin:0 auto;padding:0 26px}
+section{padding:88px 0}
+.kicker{font-size:11px;font-weight:600;letter-spacing:.3em;text-transform:uppercase;color:var(--gold-d)}
+h1,h2,h3{font-family:var(--serif);font-weight:500;line-height:1.12;letter-spacing:.005em}
+h2{font-size:clamp(30px,4.6vw,46px);margin:14px 0 16px}
+.sec-head{max-width:640px;margin-bottom:48px}
+.sec-head p{color:var(--ink-2);font-size:15.5px}
+.sec-head.center{margin-left:auto;margin-right:auto;text-align:center}
+.toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;font-size:13.5px;padding:13px 22px;border-radius:8px;opacity:0;visibility:hidden;transition:all .3s;z-index:300;box-shadow:var(--shadow);white-space:nowrap}
+.toast.show{opacity:1;visibility:visible;transform:translateX(-50%) translateY(0)}
+
+/* ---------- header ---------- */
+header{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,249,246,.93);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.nav{display:flex;align-items:center;justify-content:space-between;height:74px}
+.brand{font-family:var(--serif);font-size:24px;font-weight:600;letter-spacing:.16em;display:flex;align-items:center;gap:12px}
+.brand .mark{width:18px;height:18px;background:var(--ink);clip-path:polygon(50% 0,100% 100%,0 100%)}
+.brand small{font-family:var(--sans);font-size:8.5px;font-weight:600;letter-spacing:.34em;color:var(--ink-3);text-transform:uppercase;display:block;margin-top:1px}
+.nav-links{display:flex;align-items:center;gap:28px;list-style:none}
+.nav-links a{font-size:13px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2);padding:6px 0;position:relative;transition:color .2s}
+.nav-links a:hover,.nav-links a.active{color:var(--ink)}
+.nav-links a::after{content:"";position:absolute;left:0;bottom:0;width:0;height:1.5px;background:var(--gold);transition:width .28s}
+.nav-links a:hover::after,.nav-links a.active::after{width:100%}
+.nav-side{display:flex;align-items:center;gap:14px}
+.cart-btn{position:relative;background:none;border:1px solid var(--line);border-radius:999px;padding:9px 16px 9px 12px;font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px;color:var(--ink);transition:border-color .2s}
+.cart-btn:hover{border-color:var(--gold)}
+.cart-count{background:var(--gold);color:#fff;font-size:10.5px;font-weight:600;min-width:17px;height:17px;border-radius:9px;display:inline-flex;align-items:center;justify-content:center;padding:0 4px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;font-family:inherit;font-weight:600;font-size:13.5px;letter-spacing:.04em;padding:13px 26px;border-radius:2px;border:1px solid transparent;transition:all .22s}
+.btn-primary{background:var(--ink);color:#fff}
+.btn-primary:hover{background:var(--gold-d);color:#fff}
+.btn-line{background:transparent;color:var(--ink);border-color:var(--ink)}
+.btn-line:hover{background:var(--ink);color:#fff}
+.btn-gold{background:var(--gold);color:#fff}
+.btn-gold:hover{background:var(--gold-d)}
+.btn-sm{padding:9px 16px;font-size:12.5px}
+.menu-btn{display:none;background:none;border:1px solid var(--line);border-radius:6px;width:42px;height:42px;color:var(--ink);font-size:19px;align-items:center;justify-content:center}
+@media (max-width:900px){
+  .menu-btn{display:inline-flex}
+  .nav-links{position:fixed;top:74px;left:0;right:0;background:var(--paper);flex-direction:column;align-items:flex-start;gap:2px;padding:16px 26px 24px;border-bottom:1px solid var(--line);transform:translateY(-135%);transition:transform .32s ease;box-shadow:0 30px 44px rgba(20,20,20,.08)}
+  .nav-links.open{transform:none}
+  .nav-links li{width:100%}
+  .nav-links a{display:block;padding:13px 0;font-size:14px;border-bottom:1px solid var(--line-2);width:100%}
+  .nav-side .btn{display:none}
+}
+
+/* ---------- hero ---------- */
+.hero{padding:0;margin-top:74px}
+.hero-grid{display:grid;grid-template-columns:1fr;min-height:calc(100vh - 74px)}
+@media (min-width:960px){.hero-grid{grid-template-columns:1.05fr .95fr}}
+.hero-copy{display:flex;flex-direction:column;justify-content:center;padding:64px 0;max-width:560px}
+.hero h1{font-size:clamp(42px,6vw,68px);font-weight:500;margin:22px 0 18px}
+.hero h1 em{font-style:italic;color:var(--gold-d)}
+.hero p{color:var(--ink-2);font-size:16.5px;max-width:440px}
+.hero-cta{display:flex;gap:13px;margin-top:32px;flex-wrap:wrap}
+.hero-note{font-size:12px;color:var(--ink-3);margin-top:18px}
+.hero-img{position:relative;min-height:420px;overflow:hidden}
+.hero-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.hero-cap{position:absolute;left:18px;bottom:18px;background:rgba(250,249,246,.9);padding:10px 16px;font-family:var(--serif);font-style:italic;font-size:14px;color:var(--ink);letter-spacing:.03em}
+@media (max-width:959px){.hero-img{min-height:300px}}
+
+/* ---------- featured ---------- */
+.featured{background:var(--bg-alt)}
+.f-scroll{display:grid;grid-template-columns:1fr;gap:18px}
+@media (min-width:760px){.f-scroll{grid-template-columns:repeat(3,1fr)}}
+.f-card{position:relative;overflow:hidden;background:var(--card);border:1px solid var(--line-2)}
+.f-card img{width:100%;aspect-ratio:4/3;object-fit:cover;transition:transform .6s}
+.f-card:hover img{transform:scale(1.04)}
+.f-card .f-cap{position:absolute;inset:auto 0 0 0;background:linear-gradient(transparent,rgba(20,20,20,.75));color:#fff;padding:36px 18px 15px}
+.f-card .f-cap b{font-family:var(--serif);font-size:18px;font-weight:500;display:block}
+.f-card .f-cap span{font-size:12px;color:#D8D2C6;letter-spacing:.06em}
+.f-card .f-price{position:absolute;top:12px;right:12px;background:rgba(250,249,246,.92);color:var(--ink);font-size:12px;font-weight:600;padding:5px 11px;border-radius:2px}
+
+/* ---------- works ---------- */
+.works{background:var(--paper)}
+.w-toolbar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px;margin-bottom:38px}
+.filters{display:flex;gap:8px;flex-wrap:wrap}
+.filter{background:none;border:1px solid var(--line);color:var(--ink-2);font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:9px 17px;border-radius:999px;transition:all .2s}
+.filter:hover{color:var(--ink);border-color:var(--ink)}
+.filter.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.search{display:flex;align-items:center;gap:9px;border:1px solid var(--line);border-radius:999px;padding:9px 15px;background:var(--card)}
+.search input{border:none;outline:none;font-family:inherit;font-size:13.5px;color:var(--ink);background:none;width:180px}
+.search input::placeholder{color:var(--ink-3)}
+.w-grid{display:grid;grid-template-columns:1fr;gap:26px}
+@media (min-width:640px){.w-grid{grid-template-columns:repeat(2,1fr)}}
+@media (min-width:1000px){.w-grid{grid-template-columns:repeat(3,1fr)}}
+.work{background:var(--card);border:1px solid var(--line-2);cursor:pointer;transition:transform .28s,box-shadow .28s,border-color .28s;display:flex;flex-direction:column}
+.work:hover{transform:translateY(-5px);box-shadow:var(--shadow);border-color:rgba(176,141,79,.45)}
+.work-img{position:relative;aspect-ratio:1/1;overflow:hidden;background:var(--bg-alt)}
+.work-img img{width:100%;height:100%;object-fit:cover;transition:transform .6s}
+.work:hover .work-img img{transform:scale(1.05)}
+.work .w-avail{position:absolute;top:12px;left:12px;background:rgba(250,249,246,.92);font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;padding:5px 10px;border-radius:2px}
+.work .w-avail.sold{color:var(--ink-3)}
+.work-body{padding:16px 17px 18px;display:flex;flex-direction:column;gap:3px}
+.work-body .w-artist{font-size:11px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--gold-d)}
+.work-body h3{font-size:21px;font-weight:500;margin:3px 0 2px}
+.work-body .w-meta{font-size:12.5px;color:var(--ink-3)}
+.work-body .w-row{display:flex;justify-content:space-between;align-items:center;margin-top:10px}
+.work-body .w-price{font-family:var(--serif);font-size:19px;color:var(--ink);font-weight:600}
+.work-body .w-view{font-size:11.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2);border-bottom:1px solid var(--gold);padding-bottom:2px}
+.work.hidden{display:none}
+.w-empty{display:none;text-align:center;padding:60px 0;color:var(--ink-3);font-size:14px;grid-column:1/-1}
+.w-empty.show{display:block}
+
+/* ---------- artists ---------- */
+.artists{background:var(--bg-alt)}
+.a-grid{display:grid;grid-template-columns:1fr;gap:24px}
+@media (min-width:820px){.a-grid{grid-template-columns:repeat(3,1fr)}}
+.a-card{background:var(--card);border:1px solid var(--line-2);padding:28px 26px;display:flex;flex-direction:column}
+.a-card img{width:100%;aspect-ratio:16/10;object-fit:cover;margin-bottom:20px;filter:grayscale(.3)}
+.a-card h3{font-size:24px;font-weight:500}
+.a-card .a-meta{font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);margin:5px 0 13px}
+.a-card p{font-size:14px;color:var(--ink-2);line-height:1.7}
+.a-card .a-focus{margin-top:16px;font-size:12px;color:var(--gold-d);font-weight:600}
+
+/* ---------- exhibitions ---------- */
+.ex-grid{display:grid;grid-template-columns:1fr;gap:18px}
+@media (min-width:820px){.ex-grid{grid-template-columns:repeat(3,1fr)}}
+.ex{background:var(--card);border:1px solid var(--line-2);padding:30px 28px;position:relative;overflow:hidden}
+.ex::before{content:"";position:absolute;top:0;left:0;width:4px;height:100%;background:var(--gold)}
+.ex .ex-city{font-family:var(--serif);font-size:27px;font-weight:500}
+.ex .ex-tag{font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);margin:4px 0 14px}
+.ex p{font-size:14px;color:var(--ink-2);line-height:1.75}
+.ex .ex-hint{margin-top:16px;font-size:11.5px;color:var(--ink-3)}
+
+/* ---------- cart drawer ---------- */
+.cart-drawer{position:fixed;top:0;right:0;bottom:0;width:min(420px,100vw);background:#fff;z-index:250;transform:translateX(105%);transition:transform .4s cubic-bezier(.22,.61,.36,1);box-shadow:-18px 0 60px rgba(20,20,20,.22);display:flex;flex-direction:column}
+.cart-drawer.open{transform:none}
+.cd-head{display:flex;justify-content:space-between;align-items:center;padding:20px 24px;border-bottom:1px solid var(--line)}
+.cd-head h3{font-size:23px}
+.cd-close{background:none;border:none;font-size:24px;color:var(--ink);line-height:1}
+.cd-body{flex:1;overflow-y:auto;padding:18px 24px}
+.cd-empty{text-align:center;color:var(--ink-3);padding:60px 0;font-size:14px}
+.cd-item{display:grid;grid-template-columns:66px 1fr auto;gap:14px;padding:15px 0;border-bottom:1px solid var(--line-2);align-items:center}
+.cd-item img{width:66px;height:66px;object-fit:cover;background:var(--bg-alt)}
+.cd-item h4{font-family:var(--serif);font-size:17px;font-weight:600}
+.cd-item .cn{font-size:11.5px;color:var(--ink-3);letter-spacing:.04em}
+.cd-item .line2{display:flex;align-items:center;gap:10px;margin-top:8px;flex-wrap:wrap}
+.qty{display:flex;align-items:center;gap:2px;border:1px solid var(--line);border-radius:4px}
+.qty button{width:27px;height:27px;border:none;background:none;font-size:14px;color:var(--ink)}
+.qty button:hover{background:var(--bg-alt)}
+.qty span{min-width:27px;text-align:center;font-size:13px;font-weight:600}
+.cd-item .price{font-family:var(--serif);font-size:16px;font-weight:600}
+.cd-item .rm{background:none;border:none;color:var(--ink-3);font-size:14px;margin-left:6px}
+.cd-item .rm:hover{color:#A3442E}
+.cd-foot{border-top:1px solid var(--line);padding:18px 24px 24px;background:#fff}
+.cd-total{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:15px}
+.cd-total span{font-size:13px;font-weight:600;color:var(--ink-2);letter-spacing:.06em;text-transform:uppercase}
+.cd-total b{font-family:var(--serif);font-size:26px}
+.cd-foot .btn{width:100%}
+.cd-note{font-size:11px;color:var(--ink-3);text-align:center;margin-top:12px}
+.overlay{position:fixed;inset:0;background:rgba(20,20,20,.5);z-index:240;opacity:0;visibility:hidden;transition:all .3s}
+.overlay.show{opacity:1;visibility:visible}
+
+/* ---------- detail modal ---------- */
+.modal{position:fixed;inset:0;z-index:260;display:none;align-items:center;justify-content:center;padding:20px}
+.modal.open{display:flex}
+.modal-box{background:#fff;max-width:920px;width:100%;max-height:88vh;overflow-y:auto;display:grid;grid-template-columns:1fr;box-shadow:var(--shadow)}
+@media (min-width:860px){.modal-box{grid-template-columns:1.05fr .95fr;max-height:84vh}}
+.modal-img{background:var(--bg-alt);min-height:260px;position:relative}
+.modal-img img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.modal-body{padding:34px 32px;position:relative}
+.modal-close{position:absolute;top:14px;right:14px;background:rgba(250,249,246,.95);border:1px solid var(--line);width:38px;height:38px;border-radius:50%;font-size:18px;z-index:5}
+.modal-artist{font-size:11px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--gold-d)}
+.modal-body h3{font-size:32px;font-weight:500;margin:8px 0 4px}
+.modal-body .m-sub{font-size:13px;color:var(--ink-3)}
+.modal-price{font-family:var(--serif);font-size:27px;font-weight:600;margin:18px 0 8px}
+.m-details{display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;border-top:1px solid var(--line-2);border-bottom:1px solid var(--line-2);padding:16px 0;margin:16px 0}
+.m-details .kv{font-size:13px;color:var(--ink-2)}
+.m-details .kv b{display:block;font-size:10.5px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3)}
+.m-about{font-size:14px;color:var(--ink-2);line-height:1.75;margin-bottom:20px}
+.m-row{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.m-qty{display:flex;align-items:center;gap:2px;border:1px solid var(--line);border-radius:4px}
+.m-qty button{width:34px;height:38px;border:none;background:none;font-size:16px;color:var(--ink)}
+.m-qty span{min-width:34px;text-align:center;font-size:14px;font-weight:600}
+.m-add{flex:1;min-width:170px}
+.m-note{font-size:11.5px;color:var(--ink-3);margin-top:14px}
+
+/* ---------- checkout ---------- */
+.checkout-sec{display:none;padding-top:0}
+.checkout-sec.active{display:block}
+.co-wrap{margin-top:74px;display:grid;grid-template-columns:1fr;gap:40px;align-items:start}
+@media (min-width:900px){.co-wrap{grid-template-columns:1.15fr .85fr}}
+form{background:var(--card);border:1px solid var(--line);padding:34px}
+.f-row{display:grid;grid-template-columns:1fr;gap:16px}
+@media (min-width:560px){.f-row{grid-template-columns:1fr 1fr}}
+.f-field{margin-bottom:16px}
+.f-field.full{grid-column:1/-1}
+label{display:block;font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2);margin-bottom:7px}
+label b{color:var(--gold-d)}
+input,select,textarea{width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:3px;font-family:inherit;font-size:14.5px;color:var(--ink);background:#FDFCFA;transition:border .2s,box-shadow .2s}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(176,141,79,.14);background:#fff}
+textarea{resize:vertical;min-height:78px}
+.f-error{display:none;color:#A3442E;font-size:12px;margin-top:6px;font-weight:500}
+.f-field.bad input,.f-field.bad select,.f-field.bad textarea{border-color:#A3442E}
+.f-field.bad .f-error{display:block}
+.radio-row{display:flex;gap:12px;flex-wrap:wrap}
+.radio-row label{display:flex;align-items:center;gap:8px;border:1px solid var(--line);padding:11px 16px;border-radius:3px;cursor:pointer;font-size:13px;letter-spacing:.02em;text-transform:none;color:var(--ink);margin:0;font-weight:500}
+.radio-row label.sel{border-color:var(--gold);background:rgba(176,141,79,.07)}
+.radio-row input{display:none}
+.submit-btn{width:100%;background:var(--ink);color:#fff;font-weight:600;font-size:14px;letter-spacing:.06em;padding:15px;border-radius:3px;border:none;transition:background .25s;margin-top:4px}
+.submit-btn:hover{background:var(--gold-d)}
+.demo-note{font-size:11.5px;color:var(--ink-3);margin-top:14px;text-align:center}
+.order-summary{background:var(--card);border:1px solid var(--line);padding:28px;position:sticky;top:94px}
+.order-summary h3{font-size:23px;margin-bottom:16px}
+.os-row{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px dashed var(--line);font-size:13.5px}
+.os-row b{font-family:var(--serif);font-size:15.5px;font-weight:600}
+.os-total{display:flex;justify-content:space-between;margin-top:15px;padding-top:13px;border-top:2px solid var(--gold)}
+.os-total span{font-weight:600;letter-spacing:.06em;text-transform:uppercase;font-size:13px}
+.os-total b{font-family:var(--serif);font-size:25px}
+.confirm{display:none;text-align:center;padding:40px 22px}
+.confirm.show{display:block}
+.confirm .ok{font-family:var(--serif);font-size:46px;color:var(--gold-d);line-height:1}
+.confirm h3{font-size:27px;margin:14px 0 8px}
+.confirm .ref{display:inline-block;border:1px dashed var(--gold);padding:10px 22px;border-radius:3px;font-family:var(--serif);font-size:19px;letter-spacing:.12em;color:var(--gold-d);margin:16px 0;font-weight:600}
+.back-btn{margin-top:12px}
+
+/* ---------- footer ---------- */
+footer{background:var(--ink);color:#D8D2C6;padding:60px 0 0;margin-top:88px}
+.foot-grid{display:grid;grid-template-columns:1fr;gap:34px;padding-bottom:44px}
+@media (min-width:760px){.foot-grid{grid-template-columns:1.4fr 1fr 1fr;gap:44px}}
+.foot-brand{font-family:var(--serif);font-size:26px;font-weight:600;letter-spacing:.16em;color:#fff;display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.foot-brand .mark{width:16px;height:16px;background:var(--gold);clip-path:polygon(50% 0,100% 100%,0 100%)}
+.foot-grid h4{font-family:var(--serif);font-size:17px;color:#fff;margin-bottom:14px;font-weight:500}
+.foot-grid a{display:block;font-size:13.5px;color:#A9A298;padding:5px 0;transition:color .2s}
+.foot-grid a:hover{color:var(--gold)}
+.foot-copy{font-size:13.5px;color:#A9A298;max-width:360px;line-height:1.75}
+.demo-banner{margin-top:18px;border:1px solid rgba(176,141,79,.4);background:rgba(176,141,79,.1);border-radius:4px;padding:12px 16px;font-size:12.5px;color:#D4BC8A;line-height:1.7}
+.maker{background:#0E0E0E;color:#8A847B;text-align:center;font-size:12px;letter-spacing:.05em;padding:17px 0}
+.maker b{color:var(--gold);font-weight:600}
+</style>
+</head>
+<body>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<!-- ===== Header ===== -->
+<header>
+  <div class="wrap nav">
+    <a href="#home" class="brand"><span class="mark"></span><span>ASTER<small>Gallery · Demo</small></span></a>
+    <nav aria-label="Main">
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#home" class="active">Home</a></li>
+        <li><a href="#works">Works</a></li>
+        <li><a href="#artists">Artists</a></li>
+        <li><a href="#exhibitions">Exhibitions</a></li>
+      </ul>
+    </nav>
+    <div class="nav-side">
+      <button class="cart-btn" id="cartBtnTop" aria-label="Open cart">Bag<span class="cart-count" id="cartCountTop">0</span></button>
+      <button class="btn btn-primary btn-sm" data-cta="header">Inquire</button>
+      <button class="menu-btn" id="menuBtn" aria-label="Menu" aria-expanded="false">☰</button>
+    </div>
+  </div>
+</header>
+
+<!-- ===== Hero ===== -->
+<section class="hero" id="home">
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      <span class="kicker">Contemporary art · Singapore</span>
+      <h1>Acquire art the <em>calm</em> way.</h1>
+      <p>Aster Gallery presents original works, prints and limited editions by international artists — viewable and purchasable online, with galleries in Singapore, Beijing and Shanghai.</p>
+      <div class="hero-cta">
+        <a class="btn btn-primary" href="#works">Browse the collection</a>
+        <button class="btn btn-line" data-cta="hero">Talk to the gallery</button>
+      </div>
+      <p class="hero-note">Demonstration website by TablePilot Studio — artists, artworks and prices are fictional.</p>
+    </div>
+    <div class="hero-img">
+      <img src="assets/hero.webp" alt="Gallery exhibition hall with abstract paintings" fetchpriority="high">
+      <span class="hero-cap">Viewing room · Singapore gallery</span>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Featured ===== -->
+<section class="featured">
+  <div class="wrap">
+    <div class="sec-head center">
+      <span class="kicker">Featured works</span>
+      <h2>From the current collection</h2>
+    </div>
+    <div class="f-scroll">
+      <div class="f-card" onclick="openWork('art-vermilion')">
+        <img src="assets/art-vermilion.webp" alt="Vermilion Tension by Sofia Reyes" loading="lazy">
+        <span class="f-price">$12,500</span>
+        <div class="f-cap"><b>Vermilion Tension</b><span>Sofia Reyes · 2024</span></div>
+      </div>
+      <div class="f-card" onclick="openWork('art-porcelain')">
+        <img src="assets/art-porcelain.webp" alt="Bloom Study III by Kenji Nakamura" loading="lazy">
+        <span class="f-price">$4,800</span>
+        <div class="f-cap"><b>Bloom Study III</b><span>Kenji Nakamura · 2023</span></div>
+      </div>
+      <div class="f-card" onclick="openWork('art-ink')">
+        <img src="assets/art-ink.webp" alt="Mist and Ridge by Lin Wei" loading="lazy">
+        <span class="f-price">$8,900</span>
+        <div class="f-cap"><b>Mist and Ridge</b><span>Lin Wei · 2024</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Works ===== -->
+<section class="works" id="works">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="kicker">Works · demo collection</span>
+      <h2>Browse the collection</h2>
+      <p>Filter by medium or search by artist. All artwork details and prices are illustrative demo content.</p>
+    </div>
+    <div class="w-toolbar">
+      <div class="filters" id="filters">
+        <button class="filter on" data-f="all">All</button>
+        <button class="filter" data-f="painting">Painting</button>
+        <button class="filter" data-f="sculpture">Sculpture</button>
+        <button class="filter" data-f="print">Print</button>
+        <button class="filter" data-f="photography">Photography</button>
+        <button class="filter" data-f="mixed">Mixed media</button>
+      </div>
+      <div class="search">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input id="wSearch" type="text" placeholder="Artist or title…" aria-label="Search works">
+      </div>
+    </div>
+    <div class="w-grid" id="wGrid">
+      <!-- cards injected by JS -->
+    </div>
+    <div class="w-empty" id="wEmpty">No works match your filter. Try a different medium or search.</div>
+  </div>
+</section>
+
+<!-- ===== Artists ===== -->
+<section class="artists" id="artists">
+  <div class="wrap">
+    <div class="sec-head center">
+      <span class="kicker">Artists · fictional</span>
+      <h2>Represented artists</h2>
+      <p>A small selection of the international roster Aster represents — all profiles are illustrative.</p>
+    </div>
+    <div class="a-grid">
+      <div class="a-card">
+        <img src="assets/art-vermilion.webp" alt="Work by Sofia Reyes" loading="lazy">
+        <h3>Sofia Reyes</h3>
+        <div class="a-meta">b. 1982 · Mexico City</div>
+        <p>Abstract painter working between gesture and restraint — layered oil surfaces that hold light like stained glass.</p>
+        <div class="a-focus">Focus — Painting</div>
+      </div>
+      <div class="a-card">
+        <img src="assets/art-porcelain.webp" alt="Work by Kenji Nakamura" loading="lazy">
+        <h3>Kenji Nakamura</h3>
+        <div class="a-meta">b. 1978 · Tokyo</div>
+        <p>Ceramic sculptor whose matte porcelain forms echo petals, shells and quiet architecture in equal measure.</p>
+        <div class="a-focus">Focus — Ceramic sculpture</div>
+      </div>
+      <div class="a-card">
+        <img src="assets/art-ink.webp" alt="Work by Lin Wei" loading="lazy">
+        <h3>Lin Wei</h3>
+        <div class="a-meta">b. 1985 · Beijing</div>
+        <p>Ink and mixed-media artist bridging classical landscape discipline with contemporary abstraction.</p>
+        <div class="a-focus">Focus — Ink &amp; mixed media</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Exhibitions ===== -->
+<section class="exhibitions" id="exhibitions">
+  <div class="wrap">
+    <div class="sec-head center">
+      <span class="kicker">Exhibitions · three cities</span>
+      <h2>Visit a viewing room</h2>
+    </div>
+    <div class="ex-grid">
+      <div class="ex">
+        <div class="ex-city">Singapore</div>
+        <div class="ex-tag">Flagship · Gillman Barracks</div>
+        <p>A converted military block housing the main gallery, sculpture garden and viewing rooms for online buyers.</p>
+        <div class="ex-hint">Address and hours are placeholder demo content.</div>
+      </div>
+      <div class="ex">
+        <div class="ex-city">Beijing</div>
+        <div class="ex-tag">798 Art District</div>
+        <p>A raw industrial space for large-scale painting and solo exhibitions, co-curated with the Shanghai team.</p>
+        <div class="ex-hint">Address and hours are placeholder demo content.</div>
+      </div>
+      <div class="ex">
+        <div class="ex-city">Shanghai</div>
+        <div class="ex-tag">West Bund</div>
+        <p>Works on paper, editions and sculpture, with a private appointment lounge for collectors.</p>
+        <div class="ex-hint">Address and hours are placeholder demo content.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Checkout ===== -->
+<section class="checkout-sec" id="checkout">
+  <div class="wrap co-wrap">
+    <form id="coForm" novalidate>
+      <div class="confirm" id="confirmBox">
+        <div class="ok">✦</div>
+        <h3>Demo inquiry received</h3>
+        <p style="color:var(--ink-2);font-size:14px">This is a demonstration — no real purchase was made. Your sample reference:</p>
+        <div class="ref" id="confirmRef">ASTER-000000</div>
+        <div class="order-summary" style="text-align:left;max-width:420px;margin:0 auto 18px;position:static;box-shadow:none">
+          <h3>Inquiry summary</h3>
+          <div id="confirmSum"></div>
+        </div>
+        <button type="button" class="btn btn-line back-btn" onclick="resetCheckout()">Back to the collection</button>
+      </div>
+      <div id="coBody">
+        <div class="f-row">
+          <div class="f-field"><label for="fName">Full name <b>*</b></label><input id="fName" type="text" autocomplete="name" placeholder="Collector name"><div class="f-error">Please enter your name.</div></div>
+          <div class="f-field"><label for="fEmail">Email <b>*</b></label><input id="fEmail" type="email" autocomplete="email" placeholder="you@example.com"><div class="f-error">Please enter a valid email.</div></div>
+        </div>
+        <div class="f-row">
+          <div class="f-field"><label for="fPhone">Phone <b>*</b></label><input id="fPhone" type="tel" autocomplete="tel" placeholder="+65 0000 0000"><div class="f-error">Please enter your phone.</div></div>
+          <div class="f-field"><label for="fMethod">Collection / Delivery <b>*</b></label>
+            <div class="radio-row">
+              <label id="lblPick" class="sel"><input type="radio" name="method" value="Gallery collection" checked>Gallery collection</label>
+              <label id="lblDel"><input type="radio" name="method" value="Insured delivery">Insured delivery</label>
+            </div>
+          </div>
+        </div>
+        <div class="f-field full"><label for="fAddr">Address <b>*</b></label><input id="fAddr" type="text" placeholder="Street, city, country — for delivery or collection city"><div class="f-error">Please enter an address.</div></div>
+        <div class="f-row">
+          <div class="f-field"><label for="fDate">Preferred date <b>*</b></label><input id="fDate" type="date"><div class="f-error">Please choose a date.</div></div>
+          <div class="f-field"><label for="fTime">Time slot <b>*</b></label><select id="fTime"><option value="">Select…</option><option>10:00 – 12:00</option><option>12:00 – 14:00</option><option>14:00 – 16:00</option><option>16:00 – 18:00</option></select><div class="f-error">Please choose a time.</div></div>
+        </div>
+        <div class="f-field full"><label for="fNotes">Notes</label><textarea id="fNotes" placeholder="Provenance questions, framing, shipping preferences…"></textarea></div>
+        <button type="submit" class="submit-btn">Submit demo inquiry</button>
+        <p class="demo-note">Demo only — no payment, no real order, nothing is sent to any gallery.</p>
+      </div>
+    </form>
+    <div class="order-summary">
+      <h3>Your bag</h3>
+      <div id="osItems"></div>
+      <div class="os-total"><span>Subtotal</span><b id="osTotal">$0</b></div>
+      <button class="btn btn-line" style="width:100%;margin-top:16px" onclick="openCart()">Edit bag</button>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Footer ===== -->
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <div class="foot-brand"><span class="mark"></span>ASTER</div>
+        <p class="foot-copy">A fictional contemporary art gallery used to demonstrate an e-commerce catalogue concept. Not affiliated with any real gallery.</p>
+        <div class="demo-banner">Demonstration concept by TablePilot Studio. All artists, artworks, prices, addresses and gallery details are illustrative demo content.</div>
+      </div>
+      <div>
+        <h4>Collection</h4>
+        <a href="#works" onclick="setFilter('painting')">Painting</a>
+        <a href="#works" onclick="setFilter('sculpture')">Sculpture</a>
+        <a href="#works" onclick="setFilter('print')">Prints &amp; editions</a>
+        <a href="#works" onclick="setFilter('photography')">Photography</a>
+      </div>
+      <div>
+        <h4>Gallery</h4>
+        <a href="#artists">Artists</a>
+        <a href="#exhibitions">Exhibitions</a>
+        <a href="#home" data-toast="Demo navigation — contact is placeholder only">Contact</a>
+        <a href="#home" data-toast="Demo navigation — shipping is illustrative">Shipping &amp; returns</a>
+      </div>
+    </div>
+  </div>
+  <div class="maker">E-commerce concept by <b>TablePilot Studio</b> · HTML / CSS / JS · Gallery demo</div>
+</footer>
+
+<!-- ===== Cart drawer ===== -->
+<div class="overlay" id="overlay"></div>
+<aside class="cart-drawer" id="cartDrawer" aria-label="Shopping bag">
+  <div class="cd-head"><h3>Your bag</h3><button class="cd-close" id="cdClose" aria-label="Close bag">×</button></div>
+  <div class="cd-body" id="cdBody"></div>
+  <div class="cd-foot">
+    <div class="cd-total"><span>Subtotal</span><b id="cdTotal">$0</b></div>
+    <button class="btn btn-primary" id="coBtn">Proceed to demo inquiry</button>
+    <p class="cd-note">Demo bag · saved in your browser · no real checkout</p>
+  </div>
+</aside>
+
+<!-- ===== Detail modal ===== -->
+<div class="modal" id="workModal" role="dialog" aria-modal="true" aria-label="Artwork details">
+  <div class="modal-box">
+    <div class="modal-img" id="mImg"></div>
+    <div class="modal-body">
+      <button class="modal-close" id="mClose" aria-label="Close">×</button>
+      <div class="modal-artist" id="mArtist"></div>
+      <h3 id="mTitle"></h3>
+      <div class="m-sub" id="mSub"></div>
+      <div class="modal-price" id="mPrice"></div>
+      <div class="m-details" id="mDetails"></div>
+      <p class="m-about" id="mAbout"></p>
+      <div class="m-row">
+        <div class="m-qty">
+          <button data-mdec aria-label="Decrease">−</button><span id="mQty">1</span><button data-minc aria-label="Increase">+</button>
+        </div>
+        <button class="btn btn-primary m-add" id="mAdd">Add to bag</button>
+      </div>
+      <p class="m-note" id="mNote"></p>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ===== data ===== */
+const WORKS = [
+  { id:'art-vermilion', artist:'Sofia Reyes', title:'Vermilion Tension', media:'Oil on canvas', year:'2024', size:'150 × 180 cm', edition:'Unique', provenance:'Artist collection', cat:'painting', price:12500, img:'assets/art-vermilion.webp', avail:'Available', about:'A study in collision — vermilion and ultramarine pushed against each other until they find a truce. Thick impasto layers are crossed by fine gold incisions, leaving a small pocket of stillness at the lower left.' },
+  { id:'art-porcelain', artist:'Kenji Nakamura', title:'Bloom Study III', media:'White porcelain', year:'2023', size:'38 cm high', edition:'Unique', provenance:'Artist studio', cat:'sculpture', price:4800, img:'assets/art-porcelain.webp', avail:'Available', about:'Three petal forms folded into a single quiet silhouette. Matte porcelain finished by hand — each surface catches light differently depending on where you stand.' },
+  { id:'art-screenprint', artist:'Amara Singh', title:'Luna Arc', media:'Silkscreen on paper', year:'2024', size:'70 × 70 cm', edition:'Edition of 25 · No. 12', provenance:'Gallery edition', cat:'print', price:1950, img:'assets/art-screenprint.webp', avail:'Available', about:'Two interlocking arcs in black and champagne gold, printed with visible halftone texture. Part of the gallery edition series — signed and numbered on the reverse.' },
+  { id:'art-tide', artist:'Jonah Weiss', title:'Tide, No. 4', media:'Gelatin silver print', year:'2022', size:'60 × 60 cm', edition:'Edition of 12 · No. 4', provenance:'Artist studio', cat:'photography', price:3200, img:'assets/art-tide.webp', avail:'Available', about:'A wet black rock against an almost empty sky. Printed on fibre paper with a long tonal range — the water reads like silk against the stone.' },
+  { id:'art-ink', artist:'Lin Wei', title:'Mist and Ridge', media:'Ink on xuan paper', year:'2024', size:'96 × 180 cm', edition:'Unique', provenance:'Artist studio', cat:'mixed', price:8900, img:'assets/art-ink.webp', avail:'Available', about:'Ink mountains dissolving into cloud, with a single vermilion mark anchoring the composition. Mixed with mineral pigment on hand-made xuan paper.' },
+  { id:'art-glass', artist:'Jonas Keller', title:'Amber Confluence', media:'Hand-blown glass', year:'2023', size:'45 cm', edition:'Unique', provenance:'Gallery commission', cat:'sculpture', price:6400, img:'assets/art-glass.webp', avail:'Sold', about:'Seven hand-blown spheres in amber and clear glass, resting as a constellation. Light travels through each piece differently — a small choreography of refraction.' }
+];
+
+/* ===== toast ===== */
+const toast = document.getElementById('toast');
+let toastTimer;
+function showToast(msg){
+  toast.textContent = msg;
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove('show'), 2600);
+}
+
+/* ===== menu ===== */
+const menuBtn = document.getElementById('menuBtn');
+const navLinks = document.getElementById('navLinks');
+menuBtn.addEventListener('click', () => {
+  const open = navLinks.classList.toggle('open');
+  menuBtn.setAttribute('aria-expanded', open);
+  menuBtn.textContent = open ? '✕' : '☰';
+});
+navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+  navLinks.classList.remove('open');
+  menuBtn.textContent = '☰';
+}));
+
+/* ===== works render ===== */
+const wGrid = document.getElementById('wGrid');
+const wEmpty = document.getElementById('wEmpty');
+let curFilter = 'all', curQuery = '';
+function renderWorks(){
+  const q = curQuery.toLowerCase();
+  const list = WORKS.filter(w => (curFilter === 'all' || w.cat === curFilter) &&
+    (w.artist.toLowerCase().includes(q) || w.title.toLowerCase().includes(q) || w.media.toLowerCase().includes(q)));
+  wGrid.innerHTML = list.map(w => `
+    <article class="work" onclick="openWork('${w.id}')" role="button" tabindex="0" onkeydown="if(event.key==='Enter')openWork('${w.id}')">
+      <div class="work-img"><img src="${w.img}" alt="${w.title} by ${w.artist}" loading="lazy"><span class="w-avail ${w.avail==='Sold'?'sold':''}">${w.avail}</span></div>
+      <div class="work-body">
+        <div class="w-artist">${w.artist}</div>
+        <h3>${w.title}</h3>
+        <div class="w-meta">${w.media} · ${w.year}</div>
+        <div class="w-row"><span class="w-price">$${w.price.toLocaleString()}</span><span class="w-view">View &amp; inquire</span></div>
+      </div>
+    </article>`).join('');
+  wEmpty.classList.toggle('show', list.length === 0);
+  wGrid.style.display = list.length ? '' : 'none';
+  wEmpty.style.display = list.length ? 'none' : '';
+}
+function setFilter(f){
+  curFilter = f;
+  document.querySelectorAll('.filter').forEach(b => b.classList.toggle('on', b.dataset.f === f));
+  renderWorks();
+}
+document.querySelectorAll('.filter').forEach(b => b.addEventListener('click', () => setFilter(b.dataset.f)));
+document.getElementById('wSearch').addEventListener('input', e => { curQuery = e.target.value; renderWorks(); });
+
+/* ===== cart ===== */
+const CART_KEY = 'aster_cart_demo';
+let cart = JSON.parse(localStorage.getItem(CART_KEY) || '[]');
+const drawer = document.getElementById('cartDrawer');
+const overlay = document.getElementById('overlay');
+const cdBody = document.getElementById('cdBody');
+const fmtUSD = n => '$' + n.toLocaleString('en-US');
+function saveCart(){ localStorage.setItem(CART_KEY, JSON.stringify(cart)); }
+function totalCount(){ return cart.reduce((s,i)=>s+i.qty,0); }
+function totalPrice(){ return cart.reduce((s,i)=>s+i.qty*i.price,0); }
+function renderCart(){
+  document.getElementById('cartCountTop').textContent = totalCount();
+  document.getElementById('cdTotal').textContent = fmtUSD(totalPrice());
+  if(!cart.length){
+    cdBody.innerHTML = '<div class="cd-empty">Your bag is empty.<br>Add a work to try the demo flow.</div>';
+    return;
+  }
+  cdBody.innerHTML = cart.map((it,i) => `
+    <div class="cd-item">
+      <img src="${it.img}" alt="${it.title}">
+      <div>
+        <h4>${it.title}</h4><div class="cn">${it.artist}</div>
+        <div class="line2">
+          <div class="qty">
+            <button data-dec="${i}" aria-label="Decrease">−</button>
+            <span>${it.qty}</span>
+            <button data-inc="${i}" aria-label="Increase">+</button>
+          </div>
+          <span class="price">${fmtUSD(it.price*it.qty)}</span>
+          <button class="rm" data-rm="${i}" aria-label="Remove">✕</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+function openCart(){ drawer.classList.add('open'); overlay.classList.add('show'); renderCart(); }
+function closeCart(){ drawer.classList.remove('open'); overlay.classList.remove('show'); }
+document.getElementById('cartBtnTop').addEventListener('click', openCart);
+document.getElementById('cdClose').addEventListener('click', closeCart);
+overlay.addEventListener('click', closeCart);
+cdBody.addEventListener('click', e => {
+  const inc = e.target.closest('[data-inc]');
+  const dec = e.target.closest('[data-dec]');
+  const rm = e.target.closest('[data-rm]');
+  if(inc){ cart[+inc.dataset.inc].qty++; }
+  else if(dec){ const i=+dec.dataset.dec; cart[i].qty--; if(cart[i].qty<=0) cart.splice(i,1); }
+  else if(rm){ cart.splice(+rm.dataset.rm,1); }
+  else return;
+  saveCart(); renderCart();
+});
+function addToCart(id, qty){
+  const w = WORKS.find(x => x.id === id);
+  const found = cart.find(i => i.id === id);
+  if(found){ found.qty += qty; } else { cart.push({ id, title: w.title, artist: w.artist, price: w.price, img: w.img, qty }); }
+  saveCart(); renderCart();
+}
+
+/* ===== detail modal ===== */
+const modal = document.getElementById('workModal');
+let curWork = null, curQty = 1;
+function openWork(id){
+  const w = WORKS.find(x => x.id === id);
+  if(!w) return;
+  curWork = w; curQty = 1;
+  document.getElementById('mQty').textContent = 1;
+  document.getElementById('mImg').innerHTML = `<img src="${w.img}" alt="${w.title} by ${w.artist}">`;
+  document.getElementById('mArtist').textContent = w.artist;
+  document.getElementById('mTitle').textContent = w.title;
+  document.getElementById('mSub').textContent = w.media + ' · ' + w.year;
+  document.getElementById('mPrice').textContent = fmtUSD(w.price);
+  document.getElementById('mDetails').innerHTML =
+    `<div class="kv"><b>Medium</b>${w.media}</div><div class="kv"><b>Dimensions</b>${w.size}</div>
+     <div class="kv"><b>Edition</b>${w.edition}</div><div class="kv"><b>Year</b>${w.year}</div>
+     <div class="kv"><b>Provenance</b>${w.provenance}</div><div class="kv"><b>Status</b>${w.avail}</div>`;
+  document.getElementById('mAbout').textContent = w.about;
+  const add = document.getElementById('mAdd');
+  add.disabled = w.avail === 'Sold';
+  add.textContent = w.avail === 'Sold' ? 'Sold — inquire about waiting list' : 'Add to bag';
+  document.getElementById('mNote').textContent = 'Demo listing — all artwork details are illustrative.';
+  modal.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal(){
+  modal.classList.remove('open');
+  document.body.style.overflow = '';
+  curWork = null;
+}
+document.getElementById('mClose').addEventListener('click', closeModal);
+modal.addEventListener('click', e => { if(e.target === modal) closeModal(); });
+document.querySelector('[data-minc]').addEventListener('click', () => { curQty++; document.getElementById('mQty').textContent = curQty; });
+document.querySelector('[data-mdec]').addEventListener('click', () => { if(curQty>1){ curQty--; document.getElementById('mQty').textContent = curQty; } });
+document.getElementById('mAdd').addEventListener('click', () => {
+  if(!curWork || curWork.avail === 'Sold') return;
+  addToCart(curWork.id, curQty);
+  showToast('Added to your bag — demo cart updated.');
+  setTimeout(closeModal, 350);
+});
+document.addEventListener('keydown', e => { if(e.key === 'Escape') closeModal(); });
+
+/* ===== generic cta ===== */
+document.querySelectorAll('[data-cta]').forEach(b => b.addEventListener('click', () => {
+  showToast('Demo only — this gallery is fictional. Nothing is sent.');
+}));
+document.querySelectorAll('[data-toast]').forEach(a => a.addEventListener('click', e => {
+  e.preventDefault();
+  showToast(a.dataset.toast);
+}));
+
+/* ===== checkout ===== */
+const coBtn = document.getElementById('coBtn');
+coBtn.addEventListener('click', () => {
+  if(!cart.length){ showToast('Your bag is empty — add a work first.'); openCart(); return; }
+  closeCart();
+  document.getElementById('checkout').classList.add('active');
+  document.getElementById('checkout').scrollIntoView({behavior:'smooth'});
+  renderOrderSummary();
+});
+function renderOrderSummary(){
+  const os = document.getElementById('osItems');
+  os.innerHTML = cart.map(i => `<div class="os-row"><span>${i.title} × ${i.qty}</span><b>${fmtUSD(i.price*i.qty)}</b></div>`).join('');
+  document.getElementById('osTotal').textContent = fmtUSD(totalPrice());
+}
+document.querySelectorAll('input[name="method"]').forEach(r => r.addEventListener('change', () => {
+  document.getElementById('lblPick').classList.toggle('sel', r.value === 'Gallery collection');
+  document.getElementById('lblDel').classList.toggle('sel', r.value === 'Insured delivery');
+}));
+function mark(field, bad){ field.closest('.f-field').classList.toggle('bad', bad); return !bad; }
+document.getElementById('coForm').addEventListener('submit', e => {
+  e.preventDefault();
+  if(!cart.length){ showToast('Your bag is empty.'); return; }
+  let ok = true;
+  const name = document.getElementById('fName');
+  const email = document.getElementById('fEmail');
+  const phone = document.getElementById('fPhone');
+  const addr = document.getElementById('fAddr');
+  const date = document.getElementById('fDate');
+  const time = document.getElementById('fTime');
+  ok = mark(name, name.value.trim().length < 2) && ok;
+  ok = mark(email, !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim())) && ok;
+  ok = mark(phone, phone.value.trim().length < 7) && ok;
+  ok = mark(addr, addr.value.trim().length < 5) && ok;
+  ok = mark(date, !date.value) && ok;
+  ok = mark(time, !time.value) && ok;
+  if(!ok) return;
+  const method = document.querySelector('input[name="method"]:checked').value;
+  const ref = 'ASTER-' + Math.random().toString(36).slice(2,8).toUpperCase();
+  document.getElementById('confirmRef').textContent = ref;
+  const d = new Date(date.value + 'T00:00:00');
+  const dstr = d.toLocaleDateString('en-GB', {weekday:'short', day:'numeric', month:'short', year:'numeric'});
+  document.getElementById('confirmSum').innerHTML =
+    '<div class="os-row"><span>Collector</span><b>' + name.value + '</b></div>' +
+    '<div class="os-row"><span>' + method + '</span><b>' + dstr + ' · ' + time.value + '</b></div>' +
+    '<div class="os-row"><span>Works</span><b>' + cart.reduce((s,i)=>s+i.qty,0) + '</b></div>' +
+    '<div class="os-row"><span>Subtotal</span><b>' + fmtUSD(totalPrice()) + '</b></div>';
+  document.getElementById('coBody').style.display = 'none';
+  document.getElementById('confirmBox').classList.add('show');
+  document.getElementById('confirmBox').scrollIntoView({behavior:'smooth', block:'center'});
+});
+function resetCheckout(){
+  document.getElementById('coForm').reset();
+  document.querySelectorAll('.f-field').forEach(w => w.classList.remove('bad'));
+  document.getElementById('confirmBox').classList.remove('show');
+  document.getElementById('coBody').style.display = '';
+  document.getElementById('checkout').classList.remove('active');
+  location.hash = '#works';
+}
+
+/* ===== scrollspy ===== */
+const spy = ['home','works','artists','exhibitions'];
+window.addEventListener('scroll', () => {
+  const y = window.scrollY + 120;
+  let cur = 'home';
+  spy.forEach(id => { const el = document.getElementById(id); if(el && el.offsetTop <= y) cur = id; });
+  document.querySelectorAll('.nav-links a').forEach(a =>
+    a.classList.toggle('active', a.getAttribute('href') === '#' + cur));
+}, {passive:true});
+
+renderWorks();
+renderCart();
+</script>
+</body>
+</html>
